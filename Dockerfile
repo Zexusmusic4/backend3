@@ -1,17 +1,13 @@
-# Use a base image with Java 17 (or your desired version)
-FROM openjdk:17-jdk-slim
-
-# Set the working directory in the container
+# Stage 1: Build the application
+FROM gradle:7.4.2-jdk21 AS builder
 WORKDIR /app
+COPY build.gradle settings.gradle ./
+COPY src ./src
+RUN gradle build -x test
 
-# Copy the JAR file from your build directory to the container
-COPY target/*.jar app.jar
-
-# Expose the port your Spring Boot app runs on (usually 8080)
+# Stage 2: Create the runtime image
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
-
-# Set environment variables (if needed)
-# ENV VARIABLE_NAME=value
-
-# Command to run the application
 CMD ["java", "-jar", "app.jar"]
