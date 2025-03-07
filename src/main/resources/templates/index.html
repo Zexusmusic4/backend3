@@ -1,0 +1,23 @@
+<!-- src/main/resources/templates/index.html -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Zexus Music Streaming</title>
+</head>
+<body>
+<h1>Upload MP3</h1>
+<form method="POST" enctype="multipart/form-data" action="/music/upload">
+    <input type="file" name="file"/>
+    <button type="submit">Upload</button>
+</form>
+
+<h1>Available Music</h1>
+<ul>
+    <li th:each="musicFile : ${musicFiles}">
+        <a th:href="@{/music/download/{id}(id=${musicFile.id})}" th:text="${musicFile.fileName}">Music File</a>
+        <span th:text="'Downloads: ' + ${musicFile.downloadCount.count}"></span>
+    </li>
+</ul>
+</body>
+</html>
